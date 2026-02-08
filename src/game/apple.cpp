@@ -1,0 +1,12 @@
+#include "apple.hpp"
+#include <random>
+
+void Apple::generateApple(const std::vector<Cell>& freeCells) {
+    /* get seed */
+    std::random_device rd;
+    /* random func */
+    std::mt19937 rand(rd());
+
+    std::uniform_int_distribution<int> dist(0, freeCells.size() - 1);
+    m_position = freeCells[dist(rand)];
+}
