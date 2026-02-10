@@ -1,8 +1,8 @@
 const float quadVertices[30] = {
-    -0.5f, -0.5f,
-     0.5f, -0.5f,
-     0.5f,  0.5f,
-    -0.5f,  0.5f,
+    0.f, 0.f,
+    1.f, 0.f,
+    1.f, 1.f,
+    0.f, 1.f,
 };
 
 const unsigned int quadIndices[6] = {

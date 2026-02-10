@@ -5,7 +5,7 @@ Game::Game(const int& weight, const int& height,
            const std::array<int, 3>& oddCellColor)
             : m_field(weight, height, evenCellColor, oddCellColor), 
               m_snake(weight, height), m_status(GameStatus::GAME),
-              m_apple({-1, -1}) {
+              m_apple({-1, -1}), generateApple(false) {
     for (const Cell& bodyCell : m_snake.getBody()) {
         m_field.removeFreeCell(bodyCell);
     }
@@ -37,6 +37,12 @@ void Game::update() {
     const Cell fieldSize = m_field.getFieldSize();
 
     const Cell newHeadPos = headPos + snakeDirection;
+    
+    if (generateApple) {
+        m_apple.generateApple(m_field.getFreeCells());
+        m_field.removeFreeCell(m_apple.getPosition());
+        generateApple = false;
+    }
 
     if (checkLoose(newHeadPos, fieldSize)) {
         m_snake.move();
@@ -47,8 +53,7 @@ void Game::update() {
                 m_status = GameStatus::WIN;
                 return;
             }
-            m_apple.generateApple(m_field.getFreeCells());
-            m_field.removeFreeCell(m_apple.getPosition());
+            generateApple = true;
         }
         else {
             m_field.addFreeCell(m_snake.getLastTail());

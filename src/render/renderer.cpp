@@ -87,20 +87,50 @@ void Renderer::endFrame() {
     glUseProgram(0);
 }
 
-void Renderer::drawCell(const std::array<int, 2>& cellPos, const std::array<int, 3>& cellColor) {
+void Renderer::drawApple(const int& x, const int& y, const std::array<int, 3>& color) {
+    float r = color[0] / 255.f;
+    float g = color[1] / 255.f;
+    float b = color[2] / 255.f;
+
+    glm::mat4 model(1.0f);
+
+    model = glm::translate(model, glm::vec3(
+        x * cellWidth + cellWidth / 4.f,
+        y * cellHeight + cellHeight / 4.f,
+        0.f
+    ));
+
+    model = glm::scale(model, glm::vec3(cellWidth / 2.f));
+
+    /* uniforms */
+    if (!modelLoc)
+        modelLoc = glGetUniformLocation(shaderProgram->getID(), "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+    if (!colorLoc)
+        colorLoc = glGetUniformLocation(shaderProgram->getID(), "color");
+    glUniform3f(colorLoc, r, g, b);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+void Renderer::drawCell(const std::array<float, 2>& cellPos, const std::array<int, 3>& cellColor) {
     /* cell color */
     float r = static_cast<float>(cellColor[0]) / 255.f;
     float g = static_cast<float>(cellColor[1]) / 255.f;
     float b = static_cast<float>(cellColor[2]) / 255.f;
 
-
-    /* glm shit */
+    /* the identity matrix */
     glm::mat4 model(1.0f);
+
+    /* 2nd operation: move cell on its position */
     model = glm::translate(model, glm::vec3(
-        cellPos[0] * cellWidth + cellWidth * 0.5f,
-        cellPos[1] * cellHeight + cellHeight * 0.5f,
+        cellPos[0] * cellWidth,
+        cellPos[1] * cellHeight,
         0.f
     ));
+    
+    /* 1st operation: scale cell */
     model = glm::scale(model, glm::vec3(cellWidth));
 
     /* uniforms */

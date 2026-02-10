@@ -7,7 +7,7 @@
 
 void drawField(Renderer& renderer, const Cell& fieldSize,
 		const std::array<int, 3>& evenCellColor, const std::array<int, 3>& oddCellColor);
-void drawSnake(Renderer& renderer, const std::vector<Cell>& snakeBody);
+void drawSnake(Renderer& renderer, const std::vector<Cell>& bodySnake, const Cell& lastTail, const float& alpha);
 
 void CheckPressedKeys(const Window& window, Game& game, Cell& newSnakeDir);
 
@@ -26,7 +26,7 @@ int main() {
 	const std::array<int, 3> evenCellColor = game.field().getEvenCellColor();
 	const std::array<int, 3> oddCellColor = game.field().getOddCellColor();
 
-	Cell appleLocation;
+	Cell appleLoc;
 	Cell newSnakeDir = Direction::RIGHT;
 
 	renderer.setFieldSize(fieldSize.x, fieldSize.y);
@@ -38,7 +38,7 @@ int main() {
 
 		/* fps */
 		if (Clock::fpsAccumulator >= 1.f) {
-			window.setTitle(Clock::frames);
+			window.setTitle(Clock::frames, game.snake().getLength());
 			Clock::fpsAccumulator -= 1.f;
 			Clock::frames = 0;
 		}
@@ -48,12 +48,12 @@ int main() {
 
 		/* draw apple */
 		if (game.apple().isNew()) {
-			appleLocation = game.apple().getPosition();
+			appleLoc = game.apple().getPosition();
 			game.apple().setOld();
 		}
-		renderer.drawCell({ appleLocation.x , appleLocation.y }, { 150, 0, 0 });
+		renderer.drawApple(appleLoc.x, appleLoc.y, {150, 0, 0});
 
-		drawSnake(renderer, game.snake().getBody());
+		drawSnake(renderer, game.snake().getBody(), game.snake().getLastTail(), Clock::alpha);
 		renderer.endFrame(); // end render =============
 
 		CheckPressedKeys(window, game, newSnakeDir);
@@ -67,8 +67,8 @@ int main() {
 				Clock::gameUpdateAccumulator -= Clock::stepTime;
 			}
 		}
-		else if (game.status() == GameStatus::LOOSE) { window.close(); }
-		else if (game.status() == GameStatus::WIN) { window.close(); }
+		if (game.status() == GameStatus::LOOSE) { window.close(); }
+		if (game.status() == GameStatus::WIN) { window.close(); }
 
 		window.swapBuffers();
 		window.pollEvents();
@@ -79,18 +79,48 @@ int main() {
 
 void drawField(Renderer& renderer, const Cell& fieldSize,
 			const std::array<int, 3>& evenCellColor, const std::array<int, 3>& oddCellColor) {
+	float fX;
+	float fY;
 	for (int y = 0; y < fieldSize.x; ++y) {
 		for (int x = 0; x < fieldSize.y; ++x) {
-			renderer.drawCell({ x , y },
+			fX = static_cast<float>(x);
+			fY = static_cast<float>(y);
+			renderer.drawCell({ fX, fY },
 				(x + y) % 2 == 0 ? oddCellColor : evenCellColor
 			);
 		}
 	}
 }
 
-void drawSnake(Renderer& renderer, const std::vector<Cell>& bodySnake) {
-	for (const Cell& e : bodySnake)
-		renderer.drawCell({ e.x, e.y }, { 0, 100, 0 });
+void drawSnake(Renderer& renderer, const std::vector<Cell>& bodySnake, const Cell& lastTail, const float& alpha) {
+	float cellX, cellY;
+	int colMix = 0;
+
+	auto it = bodySnake.begin() + 1;
+	for (it; it + 1 != bodySnake.end(); ++it) {
+		cellX = static_cast<float>((*it).x);
+		cellY = static_cast<float>((*it).y);
+		renderer.drawCell({cellX, cellY}, {0, 100 + colMix, 0});
+		++colMix;
+	}
+
+	/* static pre tail */
+	cellX = static_cast<float>((*it).x);
+	cellY = static_cast<float>((*it).y);
+	renderer.drawCell({cellX, cellY}, {0, 100 + colMix, 0});
+
+	/* dynamic tail */
+	cellX = static_cast<float>(lastTail.x) + static_cast<float>((*it - lastTail).x) * alpha;
+	cellY = static_cast<float>(lastTail.y) + static_cast<float>((*it - lastTail).y) * alpha;
+	renderer.drawCell({cellX, cellY}, {0, 100 + colMix, 0});
+
+	/* dynamic head */
+	it = bodySnake.begin();
+	Cell prev = *(it + 1);
+	
+	cellX = static_cast<float>(prev.x) + static_cast<float>((*it - prev).x) * alpha;
+	cellY = static_cast<float>(prev.y) + static_cast<float>((*it - prev).y) * alpha;
+	renderer.drawCell({cellX, cellY}, {0, 100, 0});
 }
 
 void CheckPressedKeys(const Window &window, Game &game,
@@ -100,31 +130,33 @@ void CheckPressedKeys(const Window &window, Game &game,
 		window.close();
 	}	
 	else if (window.isKeyPressed(GLFW_KEY_W) || window.isKeyPressed(GLFW_KEY_A) ||
-		window.isKeyPressed(GLFW_KEY_S) || window.isKeyPressed(GLFW_KEY_D)) {
+			 window.isKeyPressed(GLFW_KEY_S) || window.isKeyPressed(GLFW_KEY_D) ||
+			 window.isKeyPressed(GLFW_KEY_UP) || window.isKeyPressed(GLFW_KEY_LEFT) ||
+			 window.isKeyPressed(GLFW_KEY_DOWN) || window.isKeyPressed(GLFW_KEY_RIGHT)) {
 		Cell snakeDirection = game.snake().getDirection();
 
-		if (window.isKeyPressed(GLFW_KEY_W) && 
+		if ((window.isKeyPressed(GLFW_KEY_W) || window.isKeyPressed(GLFW_KEY_UP)) && 
 				snakeDirection != Direction::UP && 
 				snakeDirection != Direction::DOWN) {
 			newSnakeDir = Direction::UP;
 			game.snake().setHaveNewDir();
 		}
 
-		if (window.isKeyPressed(GLFW_KEY_A) && 
+		if ((window.isKeyPressed(GLFW_KEY_A) || window.isKeyPressed(GLFW_KEY_LEFT)) && 
 				snakeDirection != Direction::LEFT && 
 				snakeDirection != Direction::RIGHT) {
 			newSnakeDir = Direction::LEFT;
 			game.snake().setHaveNewDir();
 		}
 
-		if (window.isKeyPressed(GLFW_KEY_S) && 
+		if ((window.isKeyPressed(GLFW_KEY_S) || window.isKeyPressed(GLFW_KEY_DOWN)) && 
 				snakeDirection != Direction::UP && 
 				snakeDirection != Direction::DOWN) {
 			newSnakeDir = Direction::DOWN;
 			game.snake().setHaveNewDir();
 		}
 
-		if (window.isKeyPressed(GLFW_KEY_D) && 
+		if ((window.isKeyPressed(GLFW_KEY_D) || window.isKeyPressed(GLFW_KEY_RIGHT)) && 
 				snakeDirection != Direction::LEFT && 
 				snakeDirection != Direction::RIGHT) {
 			newSnakeDir = Direction::RIGHT;

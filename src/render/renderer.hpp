@@ -38,7 +38,8 @@ public:
     void beginFrame();
     void endFrame();
 
-    void drawCell(const std::array<int, 2>& cellPos, const std::array<int, 3>& cellColor);
+    void drawApple(const int& x, const int& y, const std::array<int, 3>& color);
+    void drawCell(const std::array<float, 2>& cellPos, const std::array<int, 3>& cellColor);
 
 private:
     void init();

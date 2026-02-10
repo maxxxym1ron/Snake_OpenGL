@@ -1,3 +1,21 @@
+Version 1.2.1 Changes -------------------------------------------------------------------
+
+I. Game logical:
+- The if(GameStatus::LOOSE) in main() now checks in the same loop, where set loose flag
+- Added the ability to control snake for arrow keys
+- New apple position generates after snake completely moves on the cell with apple
+
+II. Window context:
+- Added snake length and FPSmeter in window title
+- Added icon
+
+III. Renderer:
+- Snake moves smoothly
+- Each new snake body cell is lighter the previous one
+- Apple haves smaller size
+
+
+
 Version 1.1.1 Changes -------------------------------------------------------------------
 
 I. Game logical:

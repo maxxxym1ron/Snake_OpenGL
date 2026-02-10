@@ -14,6 +14,10 @@ struct Cell {
         return { other.x + this->x, other.y + this->y };
     }
 
+    constexpr Cell operator-(const Cell& other) const noexcept {
+        return { this->x - other.x, this->y - other.y };
+    }
+
     constexpr Cell& operator+=(const Cell& other) noexcept {
         this->x = this->x + other.x;
         this->y = this->y + other.y;

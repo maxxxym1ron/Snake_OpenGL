@@ -1,10 +1,12 @@
 #pragma once
 #include <chrono>
 struct Clock {
-    inline static constexpr float stepTime = 0.2f;
+    inline static constexpr float stepTime = 0.15f;
     inline static float gameUpdateAccumulator = 0.f;
-    inline static float fpsAccumulator = 0.f;
+    
+    inline static float alpha = 0.f;
 
+    inline static float fpsAccumulator = 0.f;
     inline static unsigned int frames = 0;
 
     inline static std::chrono::steady_clock::time_point lastTime;
@@ -19,6 +21,8 @@ struct Clock {
         currentTime = std::chrono::steady_clock::now();
         delta = currentTime - lastTime;
         lastTime = currentTime;
+
+        alpha = gameUpdateAccumulator / stepTime;
 
         gameUpdateAccumulator += delta.count();
         fpsAccumulator += delta.count();

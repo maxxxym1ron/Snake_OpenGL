@@ -19,6 +19,7 @@ class Game {
     GameStatus m_status;
 
     bool m_wasAppleEaten;
+    bool generateApple;
 
     bool checkLoose(const Cell& nextHeadPos, const Cell& fieldSize);
 

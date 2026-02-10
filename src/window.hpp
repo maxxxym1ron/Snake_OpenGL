@@ -32,7 +32,7 @@ public:
     void pollEvents();
     void swapBuffers();
 
-    void setTitle(const int& fps);
+    void setTitle(const int& fps, const int& length);
 
     bool isKeyPressed(const int& keyID) const { return m_keys[keyID]; }
 
