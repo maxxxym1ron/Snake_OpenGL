@@ -26,7 +26,7 @@ public:
     ~Window() { terminateWindow(); }
     void terminate() { terminateWindow(); }
 
-    void close();
+    void close() const;
     bool shouldClose();
     
     void pollEvents();

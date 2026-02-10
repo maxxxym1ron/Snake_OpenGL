@@ -1,0 +1,14 @@
+Version 1.1.1 Changes -------------------------------------------------------------------
+
+I. Game logical:
+- Fixed snake collides with its own tail on previous logical frame
+
+II. Window context:
+- Added close Window using ESC
+
+III. Renderer:
+- Now VBO includes only 4 vertices of quad
+- Added EBO for draw quad
+- Now renderer uses uniforms to set cell position and cell color
+
+And a little cleanup.

@@ -15,4 +15,6 @@ public:
     void use() { glUseProgram(ID); }
 
     const bool getSuccessInfo() const { return compilationSuccess; }
+
+    const GLuint getID() { return ID; }
 };

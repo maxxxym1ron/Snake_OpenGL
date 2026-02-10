@@ -9,24 +9,37 @@ class ShaderProgram;
 class Renderer {
 private:
     std::unique_ptr<ShaderProgram> shaderProgram;
-    GLuint vaoID = 0;
-    GLuint vboID = 0;
 
     bool success;
 
-    void init();
+    GLuint vaoID = 0;
+    GLuint vboID = 0;
+    GLuint eboID = 0;
 
-    void initQuad();
+    /* uniforms */
+    GLuint projLoc = 0;
+    GLuint modelLoc = 0;
+    GLuint colorLoc = 0;
+
+    int fieldWidth;
+    int fieldHeight;
+
+    float cellWidth;
+    float cellHeight;
 
 public:
     Renderer();
     ~Renderer();
 
+    const bool getSuccessInfo() const { return success; }
+
+    void setFieldSize(const int& width, const int& height);
+
     void beginFrame();
-
-    void drawCell(const int& weight, const int& height, const std::array<int, 2>& cellPos, const std::array<int, 3>& cellColor);
-
     void endFrame();
 
-    const bool getSuccessInfo() const { return success; }
+    void drawCell(const std::array<int, 2>& cellPos, const std::array<int, 3>& cellColor);
+
+private:
+    void init();
 };

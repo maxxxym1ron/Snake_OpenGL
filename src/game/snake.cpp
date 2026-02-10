@@ -1,5 +1,10 @@
 #include "snake.hpp"
 
+void Snake::increase() {
+    body.push_back(lastTail);
+    headIt = body.begin();
+}
+
 void Snake::move() {
     auto it = body.rbegin();
     lastTail = *it;
@@ -8,9 +13,4 @@ void Snake::move() {
     }
 
     *headIt += direction;
-}
-
-void Snake::increase() {
-    body.push_back(lastTail);
-    headIt = body.begin();
 }

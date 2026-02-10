@@ -5,7 +5,7 @@ Game::Game(const int& weight, const int& height,
            const std::array<int, 3>& oddCellColor)
             : m_field(weight, height, evenCellColor, oddCellColor), 
               m_snake(weight, height), m_status(GameStatus::GAME),
-              m_apple({-1, -1}), newApple(true) {
+              m_apple({-1, -1}) {
     for (const Cell& bodyCell : m_snake.getBody()) {
         m_field.removeFreeCell(bodyCell);
     }
@@ -21,7 +21,7 @@ bool Game::checkLoose(const Cell& nextHeadPos, const Cell& fieldSize) {
     }
     
     std::vector<Cell> snakeBody = m_snake.getBody();
-    for (auto it = snakeBody.rbegin(); it + 2 != snakeBody.rend(); ++it) {
+    for (auto it = ++snakeBody.rbegin(); it + 1 != snakeBody.rend(); ++it) {
         if (nextHeadPos == *it) {
             m_status = GameStatus::LOOSE;
             return false;
@@ -31,7 +31,7 @@ bool Game::checkLoose(const Cell& nextHeadPos, const Cell& fieldSize) {
     return true;
 }
 
-void Game::step() {
+void Game::update() {
     const Cell headPos = m_snake.getHeadPos();
     const Cell snakeDirection = m_snake.getDirection();
     const Cell fieldSize = m_field.getFieldSize();
@@ -49,7 +49,6 @@ void Game::step() {
             }
             m_apple.generateApple(m_field.getFreeCells());
             m_field.removeFreeCell(m_apple.getPosition());
-            newApple = true;
         }
         else {
             m_field.addFreeCell(m_snake.getLastTail());

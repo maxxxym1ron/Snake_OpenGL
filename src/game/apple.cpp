@@ -9,4 +9,6 @@ void Apple::generateApple(const std::vector<Cell>& freeCells) {
 
     std::uniform_int_distribution<int> dist(0, freeCells.size() - 1);
     m_position = freeCells[dist(rand)];
+
+    m_isNew = true;
 }

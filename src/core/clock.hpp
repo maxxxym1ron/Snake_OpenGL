@@ -2,8 +2,8 @@
 #include <chrono>
 struct Clock {
     inline static constexpr float stepTime = 0.2f;
-    inline static float accumulator1 = 0.f;
-    inline static float accumulator2 = 0.f;
+    inline static float gameUpdateAccumulator = 0.f;
+    inline static float fpsAccumulator = 0.f;
 
     inline static unsigned int frames = 0;
 
@@ -20,9 +20,8 @@ struct Clock {
         delta = currentTime - lastTime;
         lastTime = currentTime;
 
-        accumulator1 += delta.count();
-
-        accumulator2 += delta.count();
+        gameUpdateAccumulator += delta.count();
+        fpsAccumulator += delta.count();
         ++frames;
     }
 };

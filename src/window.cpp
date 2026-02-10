@@ -52,7 +52,7 @@ Window::Window(int wWidth_, int wHeight_, bool fullscreen_) : terminated(false) 
     glfwSetKeyCallback(m_handle, &Window::keyCallback);
 }
 
-void Window::close() { glfwSetWindowShouldClose(m_handle, GLFW_TRUE); }
+void Window::close() const { glfwSetWindowShouldClose(m_handle, GLFW_TRUE); }
 bool Window::shouldClose() { return static_cast<bool>(glfwWindowShouldClose(m_handle)); }
 
 void Window::pollEvents() { glfwPollEvents(); }

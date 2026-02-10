@@ -2,9 +2,13 @@
 
 #include <iostream>
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "shader_program.hpp"
 #include "shaders.hpp"
+#include "quad_vertices.hpp"
 
 /* Create shader program and initialize vao and vbo */
 Renderer::Renderer(): success(false) {
@@ -22,75 +26,99 @@ Renderer::Renderer(): success(false) {
 }
 
 Renderer::~Renderer() {
-    if (vaoID) {
-        glDeleteVertexArrays(1, &vaoID);
-    }
-    if (vboID) {
-        glDeleteBuffers(1, &vboID);
-    }
+    if (vaoID) glDeleteVertexArrays(1, &vaoID);
+    if (vboID) glDeleteBuffers(1, &vboID);
+    if (eboID) glDeleteBuffers(1, &eboID);
 }
 
 void Renderer::init() {
     glGenVertexArrays(1, &vaoID);
     glGenBuffers(1, &vboID);
 
-    /* allocate memory on GPU */
+    /* Create EBO */
+    glGenBuffers(1, &eboID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), &quadIndices, GL_STATIC_DRAW);
+
+    /* Allocate memory for common cells */
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glBufferData(GL_ARRAY_BUFFER, 30 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     /* Setting VAO */
     glBindVertexArray(vaoID);
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glBindBuffer(GL_ARRAY_BUFFER, vboID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+    /* End VAO */
 
     glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
+
+    /* projection -- uniform */
+    glm::mat4 projection = glm::ortho(
+        0.0f, 2.f,
+        0.0f, 2.f
+    );
+    GLuint shaderProgramID = shaderProgram->getID();
+
+    glUseProgram(shaderProgramID);
+    GLint projLoc = glGetUniformLocation(shaderProgramID, "projection");
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+    glUseProgram(0);
 }
 
 /* preparation GPU to new frame */
 void Renderer::beginFrame() { 
     glClear(GL_COLOR_BUFFER_BIT);
+    shaderProgram->use();
+    glBindVertexArray(vaoID);
 }
 
-/* release frame */
-void Renderer::endFrame() { }
+/* Completion */
+void Renderer::endFrame() {
+    glBindVertexArray(0);
+    glUseProgram(0);
+}
 
-void Renderer::drawCell(const int& weight, const int& height,
-        const std::array<int, 2>& cellPos, const std::array<int, 3>& cellColor) {
+void Renderer::drawCell(const std::array<int, 2>& cellPos, const std::array<int, 3>& cellColor) {
     /* cell color */
     float r = static_cast<float>(cellColor[0]) / 255.f;
     float g = static_cast<float>(cellColor[1]) / 255.f;
     float b = static_cast<float>(cellColor[2]) / 255.f;
 
-    /* cell size */
-    float cellW = 2.0f / weight;
-    float cellH = 2.0f / height;
+
+    /* glm shit */
+    glm::mat4 model(1.0f);
+    model = glm::translate(model, glm::vec3(
+        cellPos[0] * cellWidth + cellWidth * 0.5f,
+        cellPos[1] * cellHeight + cellHeight * 0.5f,
+        0.f
+    ));
+    model = glm::scale(model, glm::vec3(cellWidth));
+
+    /* uniforms */
+    if (!modelLoc)
+        modelLoc = glGetUniformLocation(shaderProgram->getID(), "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+    if (!colorLoc)
+        colorLoc = glGetUniformLocation(shaderProgram->getID(), "color");
+    glUniform3f(colorLoc, r, g, b);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+void Renderer::setFieldSize(const int& width, const int& height) {
+    fieldWidth = width; 
+    fieldHeight = height; 
     
-    /* Left bottom */
-    float left = -1.0f + cellW * static_cast<float>(cellPos[0]);
-    float bottom = -1.0f + cellH * static_cast<float>(cellPos[1]);
-    /* Right top */
-    float right = left + cellW;
-    float top = bottom + cellH;
-
-    const float quadVertices[30] = {
-        left,  bottom,   r, g, b,
-        right, bottom,   r, g, b,
-        left,  top,      r, g, b,
-
-        right, bottom,   r, g, b,
-        left,  top,      r, g, b,
-        right, top,      r, g, b
-    };
-
-    shaderProgram->use();
-
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(quadVertices), quadVertices);
-    glBindVertexArray(vaoID);
-
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    glBindVertexArray(0);
+    cellWidth = 2.f / width;
+    cellHeight = 2.f / height;
 }
