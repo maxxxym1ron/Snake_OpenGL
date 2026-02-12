@@ -6,8 +6,8 @@ Game::Game(const int& weight, const int& height,
             : m_field(weight, height, evenCellColor, oddCellColor), 
               m_snake(weight, height), m_status(GameStatus::GAME),
               m_apple({-1, -1}), generateApple(false) {
-    for (const Cell& bodyCell : m_snake.getBody()) {
-        m_field.removeFreeCell(bodyCell);
+    for (const Cell& bodyEl : m_snake.getBody()) {
+        m_field.removeFreeCell(bodyEl);
     }
     m_apple.generateApple(m_field.getFreeCells());
     m_field.removeFreeCell(m_apple.getPosition());
@@ -61,4 +61,21 @@ void Game::update() {
         }
     }
     // TODO: else { deathAnimation }
+}
+
+void Game::reset() {
+    for (const Cell& bodyEl : m_snake.getBody()) {
+        m_field.addFreeCell(bodyEl);
+    }
+    m_field.addFreeCell(m_apple.getPosition());
+    
+    Cell size = m_field.getFieldSize();
+    m_snake.reset(size.x, size.y);
+    for (const Cell& bodyEl : m_snake.getBody()) {
+        m_field.removeFreeCell(bodyEl);
+    }
+    m_apple.generateApple(m_field.getFreeCells());
+    m_field.removeFreeCell(m_apple.getPosition());
+
+    m_status = GameStatus::GAME;
 }

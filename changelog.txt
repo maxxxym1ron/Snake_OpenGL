@@ -1,3 +1,13 @@
+Version 1.2.2 Changes -------------------------------------------------------------------
+
+I. Game logical:
+- Snake restarts after losing
+
+II. Window context:
+- Added func to print window errors
+
+
+
 Version 1.2.1 Changes -------------------------------------------------------------------
 
 I. Game logical:

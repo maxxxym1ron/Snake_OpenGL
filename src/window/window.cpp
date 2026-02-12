@@ -6,8 +6,6 @@
 #include "logo.hpp"
 
 Window::Window(int wWidth_, int wHeight_, bool fullscreen_) : terminated(false) {
-
-    /* init GLFW */
     if (!glfwInit()) {
         std::cout << "GLFW initialization failed" << std::endl;
         exit(1);
@@ -29,7 +27,7 @@ Window::Window(int wWidth_, int wHeight_, bool fullscreen_) : terminated(false) 
     glfwMakeContextCurrent(m_handle);
 
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cout << "GLAD: loading process failed" << std::endl;
+        std::cout << "GLAD: loading process failed." << std::endl;
         terminateWindow();
         exit(3);
     }
@@ -56,6 +54,7 @@ Window::Window(int wWidth_, int wHeight_, bool fullscreen_) : terminated(false) 
     icon.pixels = iconData;
     glfwSetWindowIcon(m_handle, 1, &icon);
 
+    glfwSetErrorCallback(&Window::errorCallback);
     glfwSetKeyCallback(m_handle, &Window::keyCallback);
 }
 
@@ -82,4 +81,8 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
         m_keys[key] = 1;
     if (action == GLFW_RELEASE)
         m_keys[key] = 0;
+}
+
+void Window::errorCallback(const int error_code, const char *description) {
+    std::cerr << "ERROR: " << error_code << "\nDESCRIPTION: " << description;
 }

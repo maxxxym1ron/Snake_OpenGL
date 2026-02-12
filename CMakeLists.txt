@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(Snake_OpenGL LANGUAGES C CXX)
 
+# set minimum C++ standart
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -12,7 +13,7 @@ add_executable(snake)
 
 target_sources(snake PRIVATE
     src/main.cpp
-    src/window.cpp
+    src/window/window.cpp
     src/render/renderer.cpp
     src/render/shader_program.cpp
     src/game/game.cpp

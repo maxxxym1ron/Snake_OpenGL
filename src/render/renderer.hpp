@@ -21,11 +21,8 @@ private:
     GLuint modelLoc = 0;
     GLuint colorLoc = 0;
 
-    int fieldWidth;
-    int fieldHeight;
-
-    float cellWidth;
-    float cellHeight;
+    float NDCcellWidth;
+    float NDCcellHeight;
 
 public:
     Renderer();

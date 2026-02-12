@@ -5,7 +5,7 @@ class ShaderProgram {
     GLuint ID;
     bool compilationSuccess;
 
-    GLuint createShader(const GLenum typeShader, const char*& shaderSource, int& success);
+    GLuint createShader(const GLenum typeShader, const char*& shaderSource, int& success, const bool& isFirst);
     void createProgram(const GLenum vertShaderID, const GLenum fragShaderID, int& success);
 
 public:

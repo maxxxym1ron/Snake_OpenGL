@@ -9,6 +9,8 @@ struct Clock {
     inline static float fpsAccumulator = 0.f;
     inline static unsigned int frames = 0;
 
+    inline static unsigned int counter = 0;
+
     inline static std::chrono::steady_clock::time_point lastTime;
     inline static std::chrono::steady_clock::time_point currentTime;
     inline static std::chrono::duration<float> delta;

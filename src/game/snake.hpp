@@ -35,4 +35,6 @@ public:
 
     void setDirection(const Cell newDirection) { direction = newDirection; m_haveNewDir = false; }
     void setHaveNewDir() { m_haveNewDir = true; }
+
+    void reset(const int& weight, const int& height);
 };

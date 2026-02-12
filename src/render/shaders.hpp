@@ -1,5 +1,5 @@
 namespace shaders {
-    /* vertex shader code */
+    /* 1st program */
     constexpr const char* vertSource = R"(#version 330 core
     layout (location = 0) in vec2 vertexPos;
 
@@ -11,7 +11,6 @@ namespace shaders {
     }
     )";
 
-    /* fragment shader code */
     constexpr const char* fragSource = R"(#version 330 core
     out vec4 FragColor;
 

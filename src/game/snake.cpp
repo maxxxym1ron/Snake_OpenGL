@@ -14,3 +14,14 @@ void Snake::move() {
 
     *headIt += direction;
 }
+
+void Snake::reset(const int& weight, const int& height) {
+    body.clear();
+    body = std::vector<Cell>{{ weight / 2, height / 2 }, { weight / 2 - 1, height / 2 }};
+
+    direction = Direction::RIGHT;
+    m_haveNewDir = false;
+
+    headIt = body.begin();
+    lastTail = *body.rbegin();
+}

@@ -7,22 +7,22 @@ ShaderProgram::ShaderProgram(const char* vertSource, const char* fragSource)
     int success = 0;
 
     /* Compile shaders */
-    GLuint vertShaderID = createShader(GL_VERTEX_SHADER, vertSource, success);
-    GLuint fragShaderID = createShader(GL_FRAGMENT_SHADER, fragSource, success);
+    GLuint vertShaderID = createShader(GL_VERTEX_SHADER, vertSource, success, 1);
+    GLuint fragShaderID = createShader(GL_FRAGMENT_SHADER, fragSource, success, 0);
 
     /* Create ShaderProgram */
     if (compilationSuccess)
         createProgram(vertShaderID, fragShaderID, success);
 }
 
-GLuint ShaderProgram::createShader(GLenum typeShader, const char*& shaderSource, int& success) {
+GLuint ShaderProgram::createShader(GLenum typeShader, const char*& shaderSource, int& success, const bool& isFirst) {
     GLuint shaderID = glCreateShader(typeShader);
     glShaderSource(shaderID, 1, &shaderSource, nullptr);
     glCompileShader(shaderID);
 
     glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
     if (!success) {
-        std::cout << "ERROR::SHADER::" << static_cast<int>(typeShader) << "_ID::COMPILATION_FAILED" << std::endl;
+        std::cout << "ERROR::SHADER::" << (isFirst ? "VERTEX" : "FRAGMENT") << "::COMPILATION_FAILED" << std::endl;
         compilationSuccess = false;
     }
 

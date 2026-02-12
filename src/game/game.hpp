@@ -38,4 +38,6 @@ public:
     Snake& snake() { return m_snake; }
 
     void update();
+
+    void reset();
 };

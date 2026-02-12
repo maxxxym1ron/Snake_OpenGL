@@ -18,8 +18,6 @@ class Window {
     // 348 = GLFW_KEY_LAST = GLFW_KEY_MENU
     inline static bool m_keys[GLFW_KEY_LAST + 1]{};
 
-    void terminateWindow();
-
 public:
     Window(int width_, int height_, bool fullscreen_);
 
@@ -36,5 +34,9 @@ public:
 
     bool isKeyPressed(const int& keyID) const { return m_keys[keyID]; }
 
+private:
+    void terminateWindow();
+
+    static void errorCallback(const int error_code, const char *description);
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 };
