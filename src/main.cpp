@@ -1,9 +1,9 @@
-#include <iostream>
-
-#include "window/window.hpp"
-#include "render/renderer.hpp"
-#include "game/game.hpp"
 #include "core/clock.hpp"
+#include "game/game.hpp"
+#include "render/renderer.hpp"
+#include "window/window.hpp"
+
+#include <iostream>
 
 void drawField(Renderer& renderer, const Cell& fieldSize,
 		const std::array<int, 3>& evenCellColor, const std::array<int, 3>& oddCellColor);
@@ -28,13 +28,14 @@ int main() {
 	const std::array<int, 3> oddCellColor = game.field().getOddCellColor();
 
 	Cell appleLoc;
-	Cell newSnakeDir = Direction::RIGHT;
+	Cell newSnakeDir = Direction::RIGHT;	
+
+	bool blink = false;
 
 	renderer.setFieldSize(fieldSize.x, fieldSize.y);
 
 	Clock::startTime();
 
-	bool blink = false;
 	while(!window.shouldClose()) {
 		Clock::calculateTime();
 
@@ -45,23 +46,26 @@ int main() {
 			Clock::frames = 0;
 		}
 
-		renderer.beginFrame();  // start render ==========
+		/* ============== Start render ============== */
+		renderer.beginFrame();
 
 		drawField(renderer, fieldSize, oddCellColor, evenCellColor);
 
-		/* draw apple */
+		// Draw apple
 		if (game.apple().isNew()) {
 			appleLoc = game.apple().getPosition();
 			game.apple().setOld();
 		}
 		renderer.drawApple(appleLoc.x, appleLoc.y, {150, 0, 0});
 
+		// Draw snake
 		if (game.status() == GameStatus::GAME)
 			drawDynamicSnake(renderer, game.snake().getBody(), game.snake().getLastTail(), Clock::alpha);
 		else if (game.status() == GameStatus::LOOSE && !blink)
 			drawStaticSnake(renderer, game.snake().getBody());
 
-		renderer.endFrame();  // end render =============
+		renderer.endFrame();
+		/* =============== End render =============== */
 
 		CheckPressedKeys(window, game, newSnakeDir);
 		

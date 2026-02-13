@@ -18,7 +18,6 @@ class Game {
 
     GameStatus m_status;
 
-    bool m_wasAppleEaten;
     bool generateApple;
 
     bool checkLoose(const Cell& nextHeadPos, const Cell& fieldSize);
@@ -28,7 +27,7 @@ public:
             const std::array<int, 3>& evenCellColor = { 30, 30, 30 }, 
             const std::array<int, 3>& oddCellColor = { 35, 35, 35 });
     
-    const GameStatus status() const { return m_status; }
+    GameStatus status() const { return m_status; }
 
     const Apple& apple() const { return m_apple; }
     const Field& field() const { return m_field; }
@@ -38,6 +37,5 @@ public:
     Snake& snake() { return m_snake; }
 
     void update();
-
     void reset();
 };

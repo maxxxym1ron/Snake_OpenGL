@@ -4,14 +4,14 @@ class Window {
     GLFWwindow* m_handle = nullptr;
 
     /* monitor info */
-    int mWidth;
-    int mHeight;
-    int mRefreshRate;
+    int m_mWidth;
+    int m_mHeight;
+    int m_mRefreshRate;
 
     /* window info */
-    int wWidth;
-    int wHeight;
-    bool fullscreen;
+    int m_width;
+    int m_height;
+    bool m_fullscreen;
 
     bool terminated;
 
@@ -19,7 +19,7 @@ class Window {
     inline static bool m_keys[GLFW_KEY_LAST + 1]{};
 
 public:
-    Window(int width_, int height_, bool fullscreen_);
+    Window(int width, int height, bool fullscreen);
 
     ~Window() { terminateWindow(); }
     void terminate() { terminateWindow(); }

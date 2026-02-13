@@ -24,6 +24,18 @@
 			"group": "build",
 			"problemMatcher": [],
 			"detail": "Build release version (with dynamic libs)"
+		},
+		{
+			"type": "cmake",
+			"label": "CMake: build RELEASE PORTABLE",
+			"command": "build",
+			"targets": [
+				"all"
+			],
+			"preset": "ninja-release-static",
+			"group": "build",
+			"problemMatcher": [],
+			"detail": "Build release version (with static libs)"
 		}
 	]
 }

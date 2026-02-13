@@ -1,27 +1,26 @@
 #include "snake.hpp"
 
 void Snake::increase() {
-    body.push_back(lastTail);
-    headIt = body.begin();
+    m_body.push_back(m_lastTail);
+    m_headIt = m_body.begin();
 }
 
 void Snake::move() {
-    auto it = body.rbegin();
-    lastTail = *it;
-    for (it; it + 1 != body.rend(); ++it) {
+    auto it = m_body.rbegin();
+    m_lastTail = *it;
+    for (it; it + 1 != m_body.rend(); ++it) {
         *it = *(it + 1);
     }
-
-    *headIt += direction;
+    *m_headIt += m_direction;
 }
 
 void Snake::reset(const int& weight, const int& height) {
-    body.clear();
-    body = std::vector<Cell>{{ weight / 2, height / 2 }, { weight / 2 - 1, height / 2 }};
+    m_body.clear();
+    m_body = std::vector<Cell>{{ weight / 2, height / 2 }, { weight / 2 - 1, height / 2 }};
 
-    direction = Direction::RIGHT;
+    m_direction = Direction::RIGHT;
     m_haveNewDir = false;
 
-    headIt = body.begin();
-    lastTail = *body.rbegin();
+    m_headIt = m_body.begin();
+    m_lastTail = *m_body.rbegin();
 }

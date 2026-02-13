@@ -49,6 +49,7 @@ void Game::update() {
         
         if (newHeadPos == m_apple.getPosition()) {
             m_snake.increase();
+            // check win
             if (m_snake.getLength() == fieldSize.x * fieldSize.y) {
                 m_status = GameStatus::WIN;
                 return;

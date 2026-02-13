@@ -28,9 +28,9 @@ public:
     Renderer();
     ~Renderer();
 
-    const bool getSuccessInfo() const { return success; }
+    bool getSuccessInfo() const { return success; }
 
-    void setFieldSize(const int& width, const int& height);
+    void setFieldSize(const int& width, const int& height) { NDCcellWidth = 2.f / width; NDCcellHeight = 2.f / height; };
 
     void beginFrame();
     void endFrame();

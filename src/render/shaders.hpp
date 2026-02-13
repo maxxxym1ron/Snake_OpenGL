@@ -1,5 +1,4 @@
 namespace shaders {
-    /* 1st program */
     constexpr const char* vertSource = R"(#version 330 core
     layout (location = 0) in vec2 vertexPos;
 

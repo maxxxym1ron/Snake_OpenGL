@@ -1,14 +1,13 @@
 #include "renderer.hpp"
+#include "shaders.hpp"
+#include "shader_program.hpp"
+#include "quad_vertices.hpp"
 
 #include <iostream>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-#include "shader_program.hpp"
-#include "shaders.hpp"
-#include "quad_vertices.hpp"
 
 Renderer::Renderer(): success(false) {
     shaderProgram = std::make_unique<ShaderProgram>(shaders::vertSource, shaders::fragSource);
@@ -43,34 +42,29 @@ void Renderer::init() {
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
     /* Setting VAO */
     glBindVertexArray(vaoID);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vboID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    /* End VAO */
-
+    
     glBindVertexArray(0);
+    /* End VAO */
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glBindVertexArray(0);
+    GLuint shaderProgramID = shaderProgram->getID();
+    glUseProgram(shaderProgramID);
 
     /* projection -- uniform */
     glm::mat4 projection = glm::ortho(
         0.0f, 2.f,
         0.0f, 2.f
     );
-    GLuint shaderProgramID = shaderProgram->getID();
-
-    glUseProgram(shaderProgramID);
     GLint projLoc = glGetUniformLocation(shaderProgramID, "projection");
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-    
+
     glUseProgram(0);
 }
 
@@ -143,9 +137,4 @@ void Renderer::drawCell(const std::array<float, 2>& cellPos, const std::array<in
     glUniform3f(colorLoc, r, g, b);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-}
-
-void Renderer::setFieldSize(const int& width, const int& height) {    
-    NDCcellWidth = 2.f / width;
-    NDCcellHeight = 2.f / height;
 }

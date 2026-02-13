@@ -12,9 +12,9 @@ public:
     ShaderProgram(const char* vertSource, const char* fragSource);
     ~ShaderProgram() { glDeleteProgram(ID); }
 
+    bool getSuccessInfo() const { return compilationSuccess; }
+
     void use() { glUseProgram(ID); }
 
-    const bool getSuccessInfo() const { return compilationSuccess; }
-
-    const GLuint getID() { return ID; }
+    GLuint getID() { return ID; }
 };

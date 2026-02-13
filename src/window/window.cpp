@@ -1,23 +1,23 @@
 #include <glad/glad.h>
-#include <iostream>
-#include <string>
-
 #include "window.hpp"
 #include "logo.hpp"
 
-Window::Window(int wWidth_, int wHeight_, bool fullscreen_) : terminated(false) {
+#include <iostream>
+#include <string>
+
+Window::Window(int width, int height, bool fullscreen) : terminated(false) {
     if (!glfwInit()) {
         std::cout << "GLFW initialization failed" << std::endl;
         exit(1);
     }
 
-    /* Set version of OpenGL */
+    /* Set OpenGL version */
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create window */ // 4 param -- is fullcreen or no
-    m_handle = glfwCreateWindow(wWidth_, wHeight_, "Snake | FPS: ", nullptr, nullptr);
+    m_handle = glfwCreateWindow(width, height, "Snake | FPS: ", nullptr, nullptr);
     if (!m_handle) {
         std::cout << "GLFW: window creation failed" << std::endl;
         terminateWindow();
@@ -36,15 +36,15 @@ Window::Window(int wWidth_, int wHeight_, bool fullscreen_) : terminated(false) 
     GLFWmonitor* monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-    mWidth = mode->width;
-    mHeight = mode->height;
-    mRefreshRate = mode->refreshRate;
+    m_mWidth = mode->width;
+    m_mHeight = mode->height;
+    m_mRefreshRate = mode->refreshRate;
 
-    wWidth = wWidth_;
-    wHeight = wHeight_;
-    fullscreen = fullscreen_;
+    m_width = width;
+    m_height = height;
+    m_fullscreen = fullscreen;
 
-    glfwSetWindowPos(m_handle, mWidth / 2 - wWidth / 2, mHeight / 2 - wHeight / 2);
+    glfwSetWindowPos(m_handle, m_mWidth / 2 - m_width / 2, m_mHeight / 2 - m_height / 2);
     glfwSetWindowAttrib(m_handle, GLFW_RESIZABLE, GLFW_FALSE);
     glfwSwapInterval(1);
 
@@ -58,16 +58,16 @@ Window::Window(int wWidth_, int wHeight_, bool fullscreen_) : terminated(false) 
     glfwSetKeyCallback(m_handle, &Window::keyCallback);
 }
 
+void Window::setTitle(const int& fps, const int& length) {
+    std::string title = "Snake | Length: " + std::to_string(length) + " | FPS: "+ std::to_string(fps);
+    glfwSetWindowTitle(m_handle, title.c_str());
+}
+
 void Window::close() const { glfwSetWindowShouldClose(m_handle, GLFW_TRUE); }
 bool Window::shouldClose() { return static_cast<bool>(glfwWindowShouldClose(m_handle)); }
 
 void Window::pollEvents() { glfwPollEvents(); }
 void Window::swapBuffers() { glfwSwapBuffers(m_handle); }
-
-void Window::setTitle(const int& fps, const int& length) {
-    std::string title = "Snake | Length: " + std::to_string(length) + " | FPS: "+ std::to_string(fps);
-    glfwSetWindowTitle(m_handle, title.c_str());
-}
 
 void Window::terminateWindow() { 
     if (!terminated) {
