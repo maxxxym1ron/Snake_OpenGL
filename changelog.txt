@@ -1,6 +1,6 @@
 Version 1.2.3 Changes -------------------------------------------------------------------
 
-Small code cleanup.
+A little code cleanup.
 
 
 
